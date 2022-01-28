@@ -1,14 +1,16 @@
 {
   "name": "wedding-api",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.1.0",
   "scripts": {
     "start": "ts-node src/index.ts",
+    "local": "heroku local web",
     "lint": "yarn eslint --ext .ts ${1:-.}",
     "lint:fix": "yarn eslint --ext .ts --fix ${1:-.}"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "mlrv",
+  "engines": {
+    "node": "14.x"
+  },
   "dependencies": {
     "body-parser": "^1.19.1",
     "express": "^4.17.2",
