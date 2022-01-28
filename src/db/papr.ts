@@ -2,8 +2,8 @@ import Papr from 'papr'
 import { MongoClient } from 'mongodb'
 import { party, Party } from './models'
 import { fromNullable } from 'fp-ts/Option'
-import { tryCatch, map } from 'fp-ts/lib/TaskEither'
-import { Lazy, pipe } from 'fp-ts/lib/function'
+import { tryCatch, map } from 'fp-ts/TaskEither'
+import { Lazy, pipe } from 'fp-ts/function'
 
 const papr = new Papr()
 const dbName = process.env.MONGODB_DB_NAME
