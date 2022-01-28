@@ -21,8 +21,10 @@ const Guest = pipe(
   D.intersect(Comments),
 )
 
-export const Party = D.struct({
+const PartyStruct = {
   email: D.string,
-  code: D.string,
   guests: D.array(Guest),
-})
+}
+
+export const PartyPOST = D.struct(PartyStruct)
+export const PartyPUT = D.partial(PartyStruct)
