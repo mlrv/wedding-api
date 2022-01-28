@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import { findByCode, findByCodeAndUpsert, insert } from '../../db/papr'
-import { pipe } from 'fp-ts/function'
+import { constVoid, pipe } from 'fp-ts/function'
 import { fold } from 'fp-ts/Either'
 import { match } from 'fp-ts/Option'
 import { PartyPOST, PartyPUT } from '../decoders'
@@ -22,7 +22,7 @@ router.post('/:code', (req: Request, res: Response) => {
   pipe(
     PartyPOST.decode(req.body),
     fold(
-      _ => onErr400(res),
+      err => onErr400(res, `Decode error, got ${JSON.stringify(err)}`),
       party =>
         findByCode(req.params.code)().then(
           handle(res)(
@@ -43,7 +43,7 @@ router.put('/:code', (req: Request, res: Response) => {
   pipe(
     PartyPUT.decode(req.body),
     fold(
-      _ => onErr400(res),
+      err => onErr400(res, `Decode error, got ${JSON.stringify(err)}`),
       partialParty =>
         findByCodeAndUpsert(req.params.code, partialParty)().then(
           handle(res)(() => res.send(partialParty)),
@@ -55,10 +55,15 @@ router.put('/:code', (req: Request, res: Response) => {
 const handle =
   (res: Response) =>
   <A, B>(onRight: (a: A) => Response<B> | Promise<Response<B>>) =>
-    fold(() => onErr500(res), onRight)
+    fold(
+      err => onErr500(res, `Internal error, got ${JSON.stringify(err)}`),
+      onRight,
+    )
 
-const onErr = (statusCode: number) => (res: Response) =>
-  Promise.resolve(res.status(statusCode).send(':('))
+const onErr = (statusCode: number) => (res: Response, msg?: string) =>
+  pipe(msg ? console.error(msg) : constVoid(), _ =>
+    Promise.resolve(res.status(statusCode).send(':(')),
+  )
 
 const onErr500 = onErr(500)
 const onErr404 = onErr(404)
