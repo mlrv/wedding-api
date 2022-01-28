@@ -1,5 +1,9 @@
+import { flow } from 'fp-ts/function'
 import { create } from './api/server'
+import { connect } from './db/papr'
 
-const server = create()
+const main = flow(connect, create, server =>
+  server.listen(8000, () => console.log('Running...')),
+)
 
-server.listen(8000, () => console.log('Running...'))
+main()
