@@ -3,7 +3,7 @@ import { create } from './api/server'
 import { connect } from './db/papr'
 
 const main = flow(connect, create, server =>
-  server.listen(8000, () => console.log('Running...')),
+  server.listen(process.env.PORT || 8000, () => console.log('Running...')),
 )
 
 main()
