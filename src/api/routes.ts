@@ -1,9 +1,8 @@
-import express, { Request, Response } from 'express'
+import express from 'express'
+import { router as rsvpRouter } from './routes/rsvp'
 
 const router = express.Router()
 
-router.get('/hello', (req: Request, res: Response) => res.send('hi get'))
-router.post('/hello', (req: Request, res: Response) => res.send('hi post'))
-
+router.use('/rsvp', rsvpRouter)
 
 export { router }
