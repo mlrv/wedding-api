@@ -13,7 +13,6 @@ export const party = schema({
   guests: types.array(
     types.object({
       name: types.string({ required: true }),
-      surname: types.string({ required: true }),
       coming: types.boolean({ required: true }),
       diet: types.enum(Object.values(Diet), { required: true }),
       comments: types.string(),
@@ -23,7 +22,6 @@ export const party = schema({
 
 export type Guest = {
   name: string
-  surname: string
   coming: boolean
   diet: Diet
   comments?: string
