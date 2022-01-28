@@ -11,10 +11,14 @@ const dbCollection = process.env.MONGODB_DB_COLLECTION
 const dbURI = process.env.MONGODB_URI
 const model = papr.model(dbCollection!, party)
 
-export const connect = (): Promise<void> =>
-  MongoClient.connect(dbURI!).then(connection => {
-    papr.initialize(connection.db(dbName))
+export const connect = (): Promise<void> => {
+  const client = MongoClient.connect(dbURI!)
+
+  return client.then(c => {
+    registerOnExit(c)
+    papr.initialize(c.db(dbName))
   })
+}
 
 export const findByCode = (c: string) =>
   pipe(
@@ -31,3 +35,11 @@ const op = <A>(f: Lazy<Promise<A>>) => tryCatch(f, err)
 
 const err = (e: unknown) =>
   `Error when talking to the database. Got ${JSON.stringify(e)}`
+
+const registerOnExit = (c: MongoClient) => {
+  process.on('exit', () => c.close())
+  process.on('SIGINT', () => c.close())
+  process.on('SIGUSR1', () => c.close())
+  process.on('SIGUSR2', () => c.close())
+  process.on('uncaughtException', () => c.close())
+}

@@ -2,7 +2,7 @@
   "name": "wedding-api",
   "version": "0.1.0",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "ts-node --transpile-only src/index.ts",
     "local": "heroku local web",
     "lint": "yarn eslint --ext .ts ${1:-.}",
     "lint:fix": "yarn eslint --ext .ts --fix ${1:-.}"
