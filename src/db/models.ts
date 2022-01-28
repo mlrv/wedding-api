@@ -1,11 +1,11 @@
 import { types, schema } from 'papr'
 
-export enum Diet {
-  omnivore = 'omnivore',
-  pescatarian = 'pescatarian',
-  vegeterian = 'vegetarian',
-  vegan = 'vegan',
-}
+const diet = [
+  'omnivore' as const,
+  'pescatarian' as const,
+  'vegetarian' as const,
+  'vegan' as const,
+]
 
 export const party = schema({
   email: types.string({ required: true }),
@@ -14,7 +14,7 @@ export const party = schema({
     types.object({
       name: types.string({ required: true }),
       coming: types.boolean({ required: true }),
-      diet: types.enum(Object.values(Diet), { required: true }),
+      diet: types.enum(Object.values(diet), { required: true }),
       comments: types.string(),
     }),
   ),
@@ -23,7 +23,7 @@ export const party = schema({
 export type Guest = {
   name: string
   coming: boolean
-  diet: Diet
+  diet: typeof diet[number]
   comments?: string
 }
 
