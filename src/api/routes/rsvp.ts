@@ -1,11 +1,27 @@
 import express, { Request, Response } from 'express'
-import { findByCode, findByCodeAndUpsert, insert } from '../../db/papr'
+import {
+  findByCode,
+  findByCodeAndUpsert,
+  insertOne,
+  insertMany,
+} from '../../db/papr'
 import { constVoid, pipe } from 'fp-ts/function'
 import { fold } from 'fp-ts/Either'
 import { match } from 'fp-ts/Option'
-import { PartyPOST, PartyPUT } from '../decoders'
+import { PartyCreate, PartyPOST, PartyPUT } from '../decoders'
 
 export const router = express.Router()
+
+router.post('/create', (req: Request, res: Response) => {
+  pipe(
+    PartyCreate.decode(req.body),
+    fold(
+      err => onErr400(res, `Decode error, got ${JSON.stringify(err)}`),
+      parties =>
+        insertMany(parties)().then(handle(res)(() => res.send(parties))),
+    ),
+  )
+})
 
 router.get('/:code', (req: Request, res: Response) => {
   findByCode(req.params.code)().then(
@@ -28,7 +44,7 @@ router.post('/:code', (req: Request, res: Response) => {
           handle(res)(
             match(
               () =>
-                insert({ code: req.params.code, ...party })().then(_ =>
+                insertOne({ code: req.params.code, ...party })().then(_ =>
                   res.send(party),
                 ),
               _ => onErr400(res),
