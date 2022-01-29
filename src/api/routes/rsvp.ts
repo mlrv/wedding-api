@@ -78,7 +78,12 @@ const handle =
 
 const onErr = (statusCode: number) => (res: Response, msg?: string) =>
   pipe(msg ? console.error(msg) : constVoid(), _ =>
-    Promise.resolve(res.status(statusCode).send(msg ?? 'Unexpected error')),
+    Promise.resolve(
+      res.status(statusCode).json({
+        code: statusCode,
+        error: msg ?? 'Unexpected error',
+      }),
+    ),
   )
 
 const onErr500 = onErr(500)
