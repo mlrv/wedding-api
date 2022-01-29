@@ -12,14 +12,29 @@ const Comments = D.partial({
   comments: D.string,
 })
 
-const Guest = pipe(
+const UnconfirmedGuest = D.struct({
+  name: D.string,
+})
+
+const ConfirmedGuestComing = pipe(
   D.struct({
-    name: D.string,
-    coming: D.boolean,
+    coming: D.literal(true),
     diet: Diet,
   }),
   D.intersect(Comments),
+  D.intersect(UnconfirmedGuest),
 )
+
+const ConfirmedGuestNotComing = pipe(
+  D.struct({
+    coming: D.literal(false),
+  }),
+  D.intersect(UnconfirmedGuest),
+)
+
+const ConfirmedGuest = D.union(ConfirmedGuestComing, ConfirmedGuestNotComing)
+
+const Guest = D.union(ConfirmedGuest, UnconfirmedGuest)
 
 const PartyStruct = {
   email: D.string,
