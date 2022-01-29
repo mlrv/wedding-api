@@ -8,20 +8,9 @@ import {
 import { constVoid, pipe } from 'fp-ts/function'
 import { fold } from 'fp-ts/Either'
 import { match } from 'fp-ts/Option'
-import { PartyCreate, PartyPOST, PartyPUT } from '../decoders'
+import { PartyPOSTMany, PartyPOSTOne, PartyPUTOne } from '../decoders'
 
 export const router = express.Router()
-
-router.post('/create', (req: Request, res: Response) => {
-  pipe(
-    PartyCreate.decode(req.body),
-    fold(
-      err => onErr400(res, `Decode error, got ${JSON.stringify(err)}`),
-      parties =>
-        insertMany(parties)().then(handle(res)(() => res.send(parties))),
-    ),
-  )
-})
 
 router.get('/:code', (req: Request, res: Response) => {
   findByCode(req.params.code)().then(
@@ -34,9 +23,20 @@ router.get('/:code', (req: Request, res: Response) => {
   )
 })
 
+router.post('/post', (req: Request, res: Response) => {
+  pipe(
+    PartyPOSTMany.decode(req.body),
+    fold(
+      err => onErr400(res, `Decode error, got ${JSON.stringify(err)}`),
+      parties =>
+        insertMany(parties)().then(handle(res)(() => res.send(parties))),
+    ),
+  )
+})
+
 router.post('/:code', (req: Request, res: Response) => {
   pipe(
-    PartyPOST.decode(req.body),
+    PartyPOSTOne.decode(req.body),
     fold(
       err => onErr400(res, `Decode error, got ${JSON.stringify(err)}`),
       party =>
@@ -57,7 +57,7 @@ router.post('/:code', (req: Request, res: Response) => {
 
 router.put('/:code', (req: Request, res: Response) => {
   pipe(
-    PartyPUT.decode(req.body),
+    PartyPUTOne.decode(req.body),
     fold(
       err => onErr400(res, `Decode error, got ${JSON.stringify(err)}`),
       partialParty =>

@@ -34,17 +34,17 @@ const ConfirmedGuestNotComing = pipe(
 
 const ConfirmedGuest = D.union(ConfirmedGuestComing, ConfirmedGuestNotComing)
 
-const PartyStructPOSTPUT = {
+const PartyStructOne = {
   email: D.string,
   guests: D.array(ConfirmedGuest),
 }
 
-const PartyStructCreate = {
+const PartyStructMany = {
   email: D.string,
   code: D.string,
   guests: D.array(UnconfirmedGuest),
 }
 
-export const PartyCreate = D.array(D.struct(PartyStructCreate))
-export const PartyPOST = D.struct(PartyStructPOSTPUT)
-export const PartyPUT = D.partial(PartyStructPOSTPUT)
+export const PartyPOSTMany = D.array(D.struct(PartyStructMany))
+export const PartyPOSTOne = D.struct(PartyStructOne)
+export const PartyPUTOne = D.partial(PartyStructOne)
