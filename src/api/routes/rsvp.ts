@@ -12,6 +12,17 @@ import { PartyPOSTMany, PartyPOSTOne, PartyPUTOne } from '../decoders'
 
 export const router = express.Router()
 
+router.post('/', (req: Request, res: Response) => {
+  pipe(
+    PartyPOSTMany.decode(req.body),
+    fold(
+      err => onErr400(res, `Decode error, got ${JSON.stringify(err)}`),
+      parties =>
+        insertMany(parties)().then(handle(res)(() => res.send(parties))),
+    ),
+  )
+})
+
 router.get('/:code', (req: Request, res: Response) => {
   findByCode(req.params.code)().then(
     handle(res)(
@@ -19,17 +30,6 @@ router.get('/:code', (req: Request, res: Response) => {
         () => onErr404(res),
         party => Promise.resolve(res.send(party)),
       ),
-    ),
-  )
-})
-
-router.post('/post', (req: Request, res: Response) => {
-  pipe(
-    PartyPOSTMany.decode(req.body),
-    fold(
-      err => onErr400(res, `Decode error, got ${JSON.stringify(err)}`),
-      parties =>
-        insertMany(parties)().then(handle(res)(() => res.send(parties))),
     ),
   )
 })
