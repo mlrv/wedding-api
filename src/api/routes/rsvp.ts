@@ -27,7 +27,7 @@ router.get('/:code', (req: Request, res: Response) => {
   findByCode(req.params.code)().then(
     handle(res)(
       match(
-        () => onErr404(res),
+        () => onErr404(res, 'Code not found'),
         party => Promise.resolve(res.send(party)),
       ),
     ),
@@ -47,7 +47,7 @@ router.post('/:code', (req: Request, res: Response) => {
                 insertOne({ code: req.params.code, ...party })().then(_ =>
                   res.send(party),
                 ),
-              _ => onErr400(res),
+              _ => onErr400(res, 'Code already exists'),
             ),
           ),
         ),
