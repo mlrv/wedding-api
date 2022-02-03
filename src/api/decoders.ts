@@ -34,6 +34,8 @@ const ConfirmedGuestNotComing = pipe(
 
 const ConfirmedGuest = D.union(ConfirmedGuestComing, ConfirmedGuestNotComing)
 
+const Locale = D.union(D.literal('gb'), D.literal('it'))
+
 const PartyStructOne = {
   email: D.string,
   guests: D.array(ConfirmedGuest),
@@ -47,4 +49,7 @@ const PartyStructMany = {
 
 export const PartyPOSTMany = D.array(D.struct(PartyStructMany))
 export const PartyPOSTOne = D.struct(PartyStructOne)
-export const PartyPUTOne = D.partial(PartyStructOne)
+export const PartyPUTOne = D.struct({
+  locale: Locale,
+  update: D.partial(PartyStructOne),
+})

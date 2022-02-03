@@ -9,6 +9,12 @@ import { constVoid, pipe } from 'fp-ts/function'
 import { fold } from 'fp-ts/Either'
 import { match } from 'fp-ts/Option'
 import { PartyPOSTMany, PartyPOSTOne, PartyPUTOne } from '../decoders'
+import { Party } from '../../db/models'
+import {
+  sendMgmtUpdate,
+  sendRSVPConfirmation,
+} from '../../nodemailer/nodemailer'
+import { Locale } from '../../nodemailer/types'
 
 export const router = express.Router()
 
@@ -60,13 +66,21 @@ router.put('/:code', (req: Request, res: Response) => {
     PartyPUTOne.decode(req.body),
     fold(
       err => onErr400(res, `Decode error, got ${JSON.stringify(err)}`),
-      partialParty =>
-        findByCodeAndUpsert(req.params.code, partialParty)().then(
-          handle(res)(() => res.send(partialParty)),
-        ),
+      ({ locale, update }) =>
+        findByCodeAndUpsert(req.params.code, update)()
+          .then(handle(res)(() => res.send(update)))
+          .then(_ => sendEmailIfAddressPresent(locale, update)),
     ),
   )
 })
+
+const sendEmailIfAddressPresent = (locale: Locale, update: Partial<Party>) => {
+  if ('email' in update)
+    return sendRSVPConfirmation(update.email!, locale).then(_ =>
+      sendMgmtUpdate(update.email!, update),
+    )
+  else return Promise.resolve()
+}
 
 const handle =
   (res: Response) =>
