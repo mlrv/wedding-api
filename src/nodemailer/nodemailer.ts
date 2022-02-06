@@ -4,6 +4,7 @@ import { constVoid, pipe } from 'fp-ts/function'
 import { Locale } from './types'
 import { Party } from '../db/models'
 
+const EMAIL_PERSONAL = process.env.EMAIL_PERSONAL || ''
 const EMAIL_USER = process.env.EMAIL_USER || ''
 const EMAIL_PASS = process.env.EMAIL_PASS || ''
 
@@ -16,10 +17,10 @@ const transporter = createTransport({
   },
 })
 
-const RSVP_CONFIRMATION_SUBJECT_GB = 'looooool'
-const RSVP_CONFIRMATION_SUBJECT_IT = 'looooool'
+const RSVP_CONFIRMATION_SUBJECT_GB = 'Olivia & Marco - RSVP Confirmation'
+const RSVP_CONFIRMATION_SUBJECT_IT = 'Olivia & Marco - Conferma RSVP'
 
-const RSVP_CONFIRMATION_TEXT_GB = 'nice'
+const RSVP_CONFIRMATION_TEXT_GB = 'Thank you so much for responding to our RSVP'
 const RSVP_CONFIRMATION_TEXT_IT = 'nice'
 
 const sendEmail = (options: {
@@ -81,7 +82,7 @@ export const sendRSVPConfirmation = (to: string, locale: Locale) =>
 export const sendMgmtUpdate = (email: string, update: Partial<Party>) =>
   pipe(makeMgmtTextSubjectFromUpdate(email, update), ({ text, subject }) =>
     sendEmail({
-      to: EMAIL_USER,
+      to: EMAIL_PERSONAL,
       text,
       subject,
     }).then(

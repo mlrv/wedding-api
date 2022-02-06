@@ -69,7 +69,11 @@ router.put('/:code', (req: Request, res: Response) => {
       ({ locale, update }) =>
         findByCodeAndUpsert(req.params.code, update)()
           .then(handle(res)(() => res.send(update)))
-          .then(_ => sendEmailIfAddressPresent(locale, update)),
+          .then(_ =>
+            req.query.email
+              ? sendEmailIfAddressPresent(locale, update)
+              : constVoid(),
+          ),
     ),
   )
 })
