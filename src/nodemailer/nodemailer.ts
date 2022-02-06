@@ -7,6 +7,10 @@ import { Option, some, match, none } from 'fp-ts/Option'
 
 import * as content from './content'
 
+const EMAIL_PERSONAL = process.env.EMAIL_PERSONAL || ''
+const EMAIL_USER = process.env.EMAIL_USER || ''
+const EMAIL_PASS = process.env.EMAIL_PASS || ''
+
 const transporter = createTransport({
   host: 'mail.privateemail.com',
   port: 465,
