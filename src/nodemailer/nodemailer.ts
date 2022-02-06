@@ -106,7 +106,7 @@ export const sendRSVPConfirmation = (
       attachments: [
         {
           filename: 'logo.png',
-          path: __dirname + '/resources/logo.png',
+          path: __dirname + '/../../resources/logo.png',
           cid: 'logo',
         },
       ],
