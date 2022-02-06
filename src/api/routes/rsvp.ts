@@ -7,7 +7,7 @@ import {
 } from '../../db/papr'
 import { constVoid, pipe } from 'fp-ts/function'
 import { fold } from 'fp-ts/Either'
-import { match } from 'fp-ts/Option'
+import { fromNullable, match } from 'fp-ts/Option'
 import { PartyPOSTMany, PartyPOSTOne, PartyPUTOne } from '../decoders'
 import { Party } from '../../db/models'
 import {
@@ -89,7 +89,7 @@ const sendEmailIfAddressPresent = (
 ) => {
   const sendConfirmationOrVoid = () =>
     'email' in update && sendConfirmation
-      ? sendRSVPConfirmation(update.email!, locale)
+      ? sendRSVPConfirmation(update.email!, locale, fromNullable(update.guests))
       : Promise.resolve()
 
   return sendConfirmationOrVoid().then(_ =>
