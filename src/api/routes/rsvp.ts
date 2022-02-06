@@ -71,19 +71,30 @@ router.put('/:code', (req: Request, res: Response) => {
           .then(handle(res)(() => res.send(update)))
           .then(_ =>
             req.query.email
-              ? sendEmailIfAddressPresent(locale, update)
+              ? sendEmailIfAddressPresent(
+                  locale,
+                  update,
+                  !!req.query.email ?? false,
+                )
               : constVoid(),
           ),
     ),
   )
 })
 
-const sendEmailIfAddressPresent = (locale: Locale, update: Partial<Party>) => {
-  if ('email' in update)
-    return sendRSVPConfirmation(update.email!, locale).then(_ =>
-      sendMgmtUpdate(update.email!, update),
-    )
-  else return Promise.resolve()
+const sendEmailIfAddressPresent = (
+  locale: Locale,
+  update: Partial<Party>,
+  sendConfirmation: boolean,
+) => {
+  const sendConfirmationOrVoid = () =>
+    'email' in update && sendConfirmation
+      ? sendRSVPConfirmation(update.email!, locale)
+      : Promise.resolve()
+
+  return sendConfirmationOrVoid().then(_ =>
+    sendMgmtUpdate(update.email!, update),
+  )
 }
 
 const handle =
