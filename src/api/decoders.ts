@@ -6,6 +6,7 @@ const Diet = D.union(
   D.literal('pescatarian'),
   D.literal('vegetarian'),
   D.literal('vegan'),
+  D.literal('gluten_free'),
 )
 
 const Comments = D.partial({

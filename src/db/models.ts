@@ -5,6 +5,7 @@ const diet = [
   'pescatarian' as const,
   'vegetarian' as const,
   'vegan' as const,
+  'gluten_free' as const,
 ]
 
 export const party = schema({
