@@ -16,20 +16,21 @@ const UnconfirmedGuest = D.struct({
   name: D.string,
 })
 
+const ConfirmedGuestBase = D.intersect(Comments)(UnconfirmedGuest)
+
 const ConfirmedGuestComing = pipe(
   D.struct({
     coming: D.literal(true),
     diet: Diet,
   }),
-  D.intersect(Comments),
-  D.intersect(UnconfirmedGuest),
+  D.intersect(ConfirmedGuestBase),
 )
 
 const ConfirmedGuestNotComing = pipe(
   D.struct({
     coming: D.literal(false),
   }),
-  D.intersect(UnconfirmedGuest),
+  D.intersect(ConfirmedGuestBase),
 )
 
 const ConfirmedGuest = D.union(ConfirmedGuestComing, ConfirmedGuestNotComing)

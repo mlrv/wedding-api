@@ -32,6 +32,7 @@ export type ConfirmedGuestComing = UnconfirmedGuest & {
 
 export type ConfirmedGuestNotComing = UnconfirmedGuest & {
   coming: false
+  comments?: string
 }
 
 export type ConfirmedGuest = ConfirmedGuestComing | ConfirmedGuestNotComing
